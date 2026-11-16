@@ -8,8 +8,15 @@ if (!input) {
   throw new Error("Supply the report-level results JSON as a file or set RR_DASHBOARD_RESULTS for the build.");
 }
 
-const source = JSON.parse(input);
-if (source.schema !== 1 || source.kind !== "submission") {
+let source;
+try {
+  source = JSON.parse(input.replace(/^\uFEFF/, ""));
+} catch (error) {
+  if (!(error instanceof SyntaxError)) throw error;
+  const setting = sourcePath ? "The supplied file" : "RR_DASHBOARD_RESULTS";
+  throw new Error(`${setting} must contain the full SupeRR_Judge_Aggregates.private.json object, including its opening and closing braces.`);
+}
+if (source?.schema !== 1 || source.kind !== "submission") {
   throw new Error("Expected a SupeRR submission results export.");
 }
 
