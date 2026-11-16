@@ -1,0 +1,7 @@
+{
+  "name": "superr-round1-evidence-dashboard",
+  "private": true,
+  "type": "module",
+  "engines": {"node": "22.x"},
+  "scripts": {"test": "node --test scripts/api.test.mjs", "dev": "node scripts/preview.mjs"}
+}
