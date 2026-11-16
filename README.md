@@ -1,29 +1,28 @@
 # SupeRR Selector | Round 1 dashboard
 
-The landing page and fictional demo are safe to serve without secrets. The judge view displays the final auction-screened shortlist, candidate comparisons and 27 historical scenario settings. The original competition pack, delivery rows, predictions, and complete audit ledgers are outside the application.
+The dashboard opens straight to the submission rankings. Switch between batting and bowling, compare players, and change the assumptions to see how historical ranks move. The build produces a self-contained HTML page using report-level summaries from the final analysis.
 
-## Preview and check locally
+## Build locally
 
-Install Node 22, then run `npm test` and `npm run dev` in this directory. Open http://127.0.0.1:4173 and select **Explore fictional demo**. The local judge endpoint stays closed unless both variables below are set.
+Use Node 22. Keep the results export outside the checkout.
 
-## Configure and deploy on Vercel
+```sh
+npm run build -- ../SupeRR_Judge_Aggregates.private.json
+npm run dev
+```
 
-1. In your signed-in Vercel CLI, run `npx vercel@latest link` from this directory. Use a new project or the exact project you intend to use. The framework preset is **Other**, the public output directory is `public`, and the judge endpoint is a Node function at `/api/results`.
-2. Confirm that the organizers permit the limited aggregates to be hosted with judge-only access. In the project's **Settings → Environment Variables**, add these two **Production** server-side secrets:
-   - `RR_ACCESS_CODE`: generate a fresh random code of at least 24 characters. For example, `node -e "console.log(require('node:crypto').randomBytes(18).toString('base64url'))"`. Keep the code out of the repo, URL, and public messages.
-   - `RR_RESULTS_JSON`: paste the contents of the separately provided `SupeRR_Judge_Aggregates.private.json`. Do not copy that file into the project or `public/`. The endpoint fails closed when it has no code or payload.
-3. Run `npx vercel@latest deploy --prod`. If Vercel Deployment Protection is active on this URL, use an organizer-approved shareable Vercel link or another approved way to give evaluators access. An ordinary visitor should see the app's access form, and the approved judges should be able to open results without needing a Vercel account.
-4. Test the exact URL in an incognito window. Confirm the fictional demo loads, an incorrect code reveals no results, and the correct code shows **Judge view**. Check both ordered lists against page 1 of the final PDF. Compare the last two bowlers and confirm that changing the scenario selectors updates the view.
-5. Enter the verified URL in the Unstop dashboard field. Provide the access code only via an organizer-approved private channel, for example the submitted PDF if the organizer confirms that is acceptable. Keep the verified analysis archive private.
+The single page at `dist/index.html` can also be opened directly in a browser. It includes the analysis summaries and can be viewed offline.
 
-The app sends the code in an HTTPS Authorization header and returns results with `Cache-Control: private, no-store`. The code is a shared secret, so anyone who receives it can view the aggregate results. Rotate it and redeploy if it is disclosed. This design gates access; it does not imply permission to publish the competition data.
+## Deploy on Vercel
 
-## Refresh the private payload
+Import this repository using the **Other** framework preset. The repository config sets `npm run build` and `dist`. Set `RR_DASHBOARD_RESULTS` to the report-level results export for the intended deployment environment, then build. The deployment serves the summaries to everyone who can open its URL. Use an open URL only if the competition organizer permits public access to those summaries. Keep the data pack and delivery-level records out of the project.
 
-Run the following from the dashboard directory with Python 3:
+Before entering a dashboard URL on Unstop, open the production URL in a signed-out browser. Check that it opens straight to the real shortlist, that both lists match the final PDF, and that the comparison and scenario controls work.
+
+## Refresh the results export
 
 ```sh
 python scripts/export_aggregates.py --results /path/to/final-analysis/results --comparisons /path/to/comparison-players.json --output ../SupeRR_Judge_Aggregates.private.json
 ```
 
-The optional comparisons file is a JSON object with `batting` and `bowling` arrays of player names. Supply any comparison names from your private analysis and keep that file outside the repository. The export uses rounded submission and comparison summaries. The 27 scenario values are full-pool historical ranks before the final auction screen. Missing scenario ranks indicate ineligibility under that setting. The export contains only player summaries.
+The optional comparisons file is a JSON object with `batting` and `bowling` arrays of player names. Keep it with the private analysis. Scenario ranks are historical and cover the full eligible pool before the auction screen.

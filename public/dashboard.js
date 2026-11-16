@@ -7,28 +7,7 @@ const node = (tag, value, className) => {
   return el;
 };
 
-function makeDemo() {
-  const make = (names) => names.map((name, i) => {
-    const scenarios = {};
-    for (const win of ["primary", "narrow", "finish"]) {
-      for (const w of [5, 10, 15]) {
-        for (const p of [50, 100, 200]) {
-          const offset = (win === "narrow" ? i : win === "finish" ? -i : 0) + (w-10)/5 + ([50,100,200].indexOf(p)-1);
-          if (!(win === "narrow" && i === 2)) scenarios[`grid_${win}_w${w}_p${p}`] = Math.max(1, i+1+offset);
-        }
-      }
-    }
-    return {name, rank:i<3?i+1:null, historyRank:i+1, score:.51-i*.09, events:61-i*7, matches:11-i,
-            pressure:.94-i*.2, ordinary:.17+i*.04, interval:[.08-i*.1,1.7-i*.11],
-            gridTop:23-i*4, gridEligible:27, looTop:11-i*2, looTotal:11-i, scenarios};
-  });
-  return {schema:1,kind:"demo",batting:make(["Demo Batter A","Demo Batter B","Demo Batter C","Demo Reserve"]),
-    bowling:make(["Demo Bowler A","Demo Bowler B","Demo Bowler C","Demo Reserve"])};
-}
-
-let dataset;
 let role = "batting";
-let requestVersion = 0;
 const choices = ["player-a", "player-b"];
 const alternate = (p) => p.rank ? `Submission #${p.rank}` : `Historical #${p.historyRank} · comparison`;
 const metric = (value, label) => {
@@ -36,17 +15,6 @@ const metric = (value, label) => {
   card.append(node("strong",value),node("span",label));
   return card;
 };
-
-function show(next) {
-  dataset = next;
-  role = "batting";
-  $("gate").hidden = true;
-  $("dashboard").hidden = false;
-  $("mode").textContent = next.kind === "demo" ? "Fictional data" : "Judge view";
-  $("rank-title").textContent = next.kind === "demo" ? "Fictional shortlist" : "Submitted order";
-  renderRole();
-  $("batting").focus();
-}
 
 function renderRole() {
   for (const kind of ["batting","bowling"]) $(kind).setAttribute("aria-pressed", String(kind===role));
@@ -60,7 +28,7 @@ function renderRole() {
       return o;
     }));
   }
-  const nearCutoff = role === "bowling" && dataset.kind !== "demo";
+  const nearCutoff = role === "bowling";
   $(choices[0]).value = String(nearCutoff ? 8 : 0);
   $(choices[1]).value = String(nearCutoff ? 9 : 1);
   const rows = picked.map((p,i) => {
@@ -103,7 +71,12 @@ function profile(p) {
 
 const compared = () => choices.map((id) => dataset[role][Number($(id).value)]);
 function renderComparison() {
-  $("compare").replaceChildren(...compared().map(profile));
+  const [first, second] = compared();
+  const gap = first.score - second.score;
+  $("compare").replaceChildren(profile(first), profile(second));
+  $("comparison-gap").textContent = first === second
+    ? "Choose a second player to compare scores."
+    : `Score difference (A − B): ${signed(gap, 4)}. This is a point estimate.`;
   for (const b of $("rows").querySelectorAll("button")) b.setAttribute("aria-pressed",String(b.dataset.index===$(choices[0]).value));
   renderScenario();
 }
@@ -118,46 +91,10 @@ function renderScenario() {
   $("scenario-result").replaceChildren(...output);
 }
 
-$("access").addEventListener("submit",async (event) => {
-  event.preventDefault();
-  const button = $("access").querySelector("button");
-  const id = ++requestVersion;
-  const code = $("code").value;
-  $("code").value = "";
-  $("status").textContent = "Checking access…";
-  button.disabled = true;
-  try {
-    const response = await fetch("/api/results",{
-      method:"POST",headers:{Authorization:`Bearer ${code}`},cache:"no-store",redirect:"error"
-    });
-    const data = await response.json();
-    if (id !== requestVersion) return;
-    if (!response.ok) throw new Error(data.message || "Evidence could not be opened.");
-    show(data);
-    $("status").textContent = "";
-  } catch (error) {
-    if (id === requestVersion) $("status").textContent = error.message || "Evidence could not be opened.";
-  } finally {
-    if (id === requestVersion) button.disabled = false;
-  }
-});
-
-$("demo").addEventListener("click",() => {
-  requestVersion++;
-  $("access").querySelector("button").disabled = false;
-  $("status").textContent = "";
-  $("code").value = "";
-  show(makeDemo());
-});
-$("lock").addEventListener("click",() => {
-  dataset = undefined;
-  for (const id of ["summary","rows","compare","scenario-result",...choices]) $(id).replaceChildren();
-  $("dashboard").hidden = true;
-  $("gate").hidden = false;
-  $("code").focus();
-});
 for (const kind of ["batting","bowling"]) $(kind).addEventListener("click",() => {
   if (role !== kind) { role = kind; renderRole(); }
 });
 for (const id of choices) $(id).addEventListener("change",renderComparison);
 for (const id of ["window","wickets","prior"]) $(id).addEventListener("change",renderScenario);
+
+renderRole();

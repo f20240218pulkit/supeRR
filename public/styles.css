@@ -2,9 +2,9 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0}
-button,input,select{font:inherit}
+button,select{font:inherit}
 button,select{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #b02f71;outline-offset:3px}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #b02f71;outline-offset:3px}
 .skip{position:absolute;left:.7rem;top:-8rem;background:white;padding:.8rem;z-index:2}
 .skip:focus{top:1rem}
 .shell{max-width:1190px;width:calc(100% - 64px);margin-inline:auto}
@@ -29,21 +29,14 @@ h2{font:700 clamp(1.45rem,2.7vw,1.9rem)/1.12 Georgia,serif;margin-bottom:.4rem;l
 .field i,.field b{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .field i{height:24px;width:75px;border:1px solid #ff9bc6}.field b{height:42px;width:51px;border-inline:1px solid #ff9bc6}
 .card{border:1px solid var(--line);background:var(--white);border-radius:17px;padding:1.25rem}
-.gate{margin-top:1.25rem;max-width:720px}
-.gate p,.card-heading p,.fine,.method p{line-height:1.55;color:var(--muted)}
-.gate .eyebrow,.card-heading .eyebrow,.method .eyebrow{color:var(--pink)}
+.card-heading p,.fine,.method p{line-height:1.55;color:var(--muted)}
+.card-heading .eyebrow,.method .eyebrow{color:var(--pink)}
 label{display:block;font-size:.8rem;font-weight:750}
-input,select{width:100%;border:1px solid #afa7b9;background:#fff;color:var(--ink);border-radius:8px;padding:.6rem .65rem;margin-top:.32rem;min-height:42px}
-.actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem;align-items:end}
+select{width:100%;border:1px solid #afa7b9;background:#fff;color:var(--ink);border-radius:8px;padding:.6rem .65rem;margin-top:.32rem;min-height:42px}
 button{border:1px solid transparent;border-radius:8px;background:var(--pink);color:white;font-weight:750;padding:.6rem .85rem}
 button:hover{filter:brightness(.92)}
-button:disabled{opacity:.6;cursor:wait}
-.quiet{background:transparent;color:var(--pink);border:1px solid var(--line)}
-#status{margin:.55rem 0;font-size:.85rem;min-height:1.25em;color:#9b1a4c}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin:1.25rem 0 .8rem}
 .segmented{background:#eae4eb;border-radius:10px;padding:3px;display:flex;gap:3px}.segmented button{background:transparent;color:var(--ink)}.segmented [aria-pressed=true]{background:var(--ink);color:white}
-.mode-actions{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap}
-.tag{background:#f8e6ef;color:#8d144e;border-radius:20px;padding:.4rem .65rem;font-size:.72rem;font-weight:800}
 .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin-bottom:.85rem}
 .metric{background:#302344;color:#fff;border-radius:12px;padding:.8rem 1rem}.metric strong{display:block;font:700 clamp(1.1rem,3vw,1.65rem)/1.1 Georgia,serif}.metric span{display:block;font-size:.72rem;margin-top:.42rem;color:#f3d5e8}
 .layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:.85rem}
@@ -71,4 +64,5 @@ td button[aria-pressed=true]{background:#f9e4ef;color:#8b164d}
 .method p{margin-bottom:.25rem;font-size:.85rem;max-width:830px}
 .footer{display:flex;justify-content:space-between;gap:1rem;border-top:1px solid var(--line);padding:1rem 0;color:var(--muted);margin-top:1.5rem;font-size:.74rem}
 @media(max-width:850px){.layout{grid-template-columns:1fr}.field{right:-25%;opacity:.28}}
-@media(max-width:520px){.shell{width:calc(100% - 28px)}.card{padding:.9rem}.hero{min-height:210px}.author{font-size:.57rem}.metric{padding:.6rem}.metric span{font-size:.65rem}.scenario{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.profile{padding:.55rem}.profile dl div{grid-template-columns:1fr}.profile dd{text-align:left}.footer{font-size:.66rem}}
+@media(max-width:520px){.shell{width:calc(100% - 28px)}.card{padding:.9rem}.hero{min-height:210px}.author{font-size:.57rem}.metric{padding:.6rem}.metric span{font-size:.65rem}.scenario{grid-template-columns:1fr}.profile{padding:.55rem}.profile dl div{grid-template-columns:1fr}.profile dd{text-align:left}.footer{font-size:.66rem}}
+.comparison-gap{font-size:.78rem;color:var(--muted);margin:.7rem 0 0}
